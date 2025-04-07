@@ -614,16 +614,26 @@ class _NotesScreenState extends State<NotesScreen> {
           Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
-              title: const Text('Notes'),
+              elevation: 0,
+              scrolledUnderElevation: 1,
+              title: Text('Notes', style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              )),
               actions: [
                 if (_notes.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.delete_sweep),
+                    icon: const Icon(Icons.delete_sweep, size: 24),
                     tooltip: 'Delete All Notes',
+                    style: IconButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
                     onPressed: _showDeleteAllConfirmation,
                   ),
                 IconButton(
-                  icon: const Icon(Icons.settings),
+                  icon: const Icon(Icons.settings, size: 24),
+                  style: IconButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                   onPressed: () async{
                    await Navigator.push(
                       context,
@@ -644,47 +654,92 @@ class _NotesScreenState extends State<NotesScreen> {
                       )
                     : ListView.builder(
                         itemCount: _notes.length,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         itemBuilder: (context, index) {
                           final note = _notes[index];
                           return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ListTile(
-                                  title: Text(note.content),
-                                  subtitle: Text(
-                                    DateFormat('MMM d, y HH:mm')
-                                        .format(note.createdAt),
+                                  contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                  title: Text(
+                                    note.content,
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      DateFormat('MMM d, y HH:mm').format(note.createdAt),
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
                                   ),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.edit),
+                                        icon: Icon(
+                                          Icons.edit_outlined,
+                                          color: Theme.of(context).colorScheme.primary,
+                                          size: 20,
+                                        ),
                                         onPressed: () => _editNote(note),
                                         tooltip: 'Edit Note',
+                                        style: IconButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.delete),
+                                        icon: Icon(
+                                          Icons.delete_outline,
+                                          color: Theme.of(context).colorScheme.error,
+                                          size: 20,
+                                        ),
                                         onPressed: () => _deleteNote(note),
                                         tooltip: 'Delete Note',
+                                        style: IconButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 if (note.tags.isNotEmpty)
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        16, 0, 16, 16),
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                                     child: Wrap(
-                                      spacing: 8,
+                                      spacing: 6,
+                                      runSpacing: 6,
                                       children: note.tags.map((tag) {
-                                        return Chip(
-                                          label: Text(tag),
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .secondaryContainer,
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.secondaryContainer,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Text(
+                                            tag,
+                                            style: TextStyle(
+                                              color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                              fontSize: 12,
+                                            ),
+                                          ),
                                         );
                                       }).toList(),
                                     ),
@@ -706,7 +761,8 @@ class _NotesScreenState extends State<NotesScreen> {
                   heroTag: 'btn_text',
                   onPressed: _openTextNoteDialog,
                   tooltip: 'Add Text Note',
-                  child: const Icon(Icons.edit),
+                  elevation: 2,
+                  child: const Icon(Icons.edit_outlined, size: 20),
                 ),
                 const SizedBox(height: 16),
                 Stack(
@@ -715,42 +771,38 @@ class _NotesScreenState extends State<NotesScreen> {
                       heroTag: 'btn_voice',
                       onPressed: _startListening,
                       tooltip: 'Record Voice Note',
+                      elevation: 2,
                       child: Icon(
                         _speechService.isListening ? Icons.mic : Icons.mic_none,
-                        color: _speechService.isListening ? Colors.red : null,
+                        color: _speechService.isListening ? Theme.of(context).colorScheme.error : null,
                       ),
                     ),
                     if (_speechService.isListening)
-                      const Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                      Positioned.fill(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
                   ],
                 ),
               ],
             ): null,
-            bottomNavigationBar: BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.notes), label: 'Notes'),
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: 1,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.notes_outlined),
+                  selectedIcon: Icon(Icons.notes),
+                  label: 'Notes',
+                ),
               ],
-                        selectedItemColor: Theme.of(context).brightness == Brightness.dark
-              ? Theme.of(context).indicatorColor
-              : Theme.of(context).colorScheme.primary,
-          unselectedItemColor: Theme.of(context).brightness == Brightness.dark
-              ? Theme.of(context).disabledColor
-              : Theme.of(context).unselectedWidgetColor,
-
-              currentIndex: 1,
-              onTap: (index) {
+              onDestinationSelected: (index) {
                 if (index == 0) {
                   Navigator.pushReplacement(
                       context,
@@ -763,12 +815,13 @@ class _NotesScreenState extends State<NotesScreen> {
           // Loading overlay when generating tags
           if (_isGeneratingTags)
             Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.scrim.withOpacity(0.32),
               child: Center(
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  elevation: 0,
                   color: Theme.of(context).colorScheme.surface,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -776,21 +829,27 @@ class _NotesScreenState extends State<NotesScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(),
+                        SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                         const SizedBox(height: 24),
                         Text(
                           'Generating tags with Gemini AI...',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'This may take a few seconds',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
