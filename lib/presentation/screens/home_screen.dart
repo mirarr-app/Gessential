@@ -180,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          backgroundColor: Colors.grey[900],
           title: const Text('Chat'),
           actions: [
             IconButton(

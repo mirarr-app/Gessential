@@ -70,7 +70,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShadApp.material(
       navigatorKey: navigatorKey,
-      title: 'GemRem',
+      title: 'Gessential',
       initialRoute: onboardingCompleted ? '/' : '/onboarding',
       routes: {
         '/': (context) => const RootScreen(),
@@ -83,7 +83,6 @@ class MainApp extends StatelessWidget {
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
         colorScheme: const ShadZincColorScheme.dark(
-
         ),
         
         textTheme: ShadTextTheme.fromGoogleFont(
