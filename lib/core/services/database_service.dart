@@ -107,15 +107,12 @@ class DatabaseService {
   Future<List<Note>> getNotesByTags(List<String> tags) async {
     if (tags.isEmpty) return [];
 
-    print('\n=== Searching notes by tags ===');
-    print('Search tags: $tags');
 
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'notes',
       orderBy: 'created_at DESC',
     );
-    print('Total notes in database: ${maps.length}');
 
     // Helper function to normalize tags for comparison
     String normalizeTag(String tag) {
@@ -129,36 +126,26 @@ class DatabaseService {
 
     // Normalize search tags
     final normalizedSearchTags = tags.map(normalizeTag).toList();
-    print('Normalized search tags: $normalizedSearchTags');
 
     // Filter notes that have at least one matching tag
     final notes = maps.map((map) => Note.fromMap(map)).where((note) {
       // Normalize note tags
       final normalizedNoteTags = note.tags.map(normalizeTag).toList();
-      print('Note tags: ${note.tags} -> Normalized: $normalizedNoteTags');
 
       final hasMatchingTag = normalizedNoteTags.any((noteTag) {
         return normalizedSearchTags.any((searchTag) {
           // Check if tags share a common root (one contains the other)
           final matches =
               noteTag.contains(searchTag) || searchTag.contains(noteTag);
-          if (matches) {
-            print('Match found: $noteTag matches with $searchTag');
-          }
+        
           return matches;
         });
       });
 
-      if (hasMatchingTag) {
-        print('Found matching note:');
-        print('- Content: ${note.content}');
-        print('- Tags: ${note.tags}');
-      }
+
       return hasMatchingTag;
     }).toList();
 
-    print('Found ${notes.length} matching notes');
-    print('=== Note search complete ===\n');
     return notes;
   }
 

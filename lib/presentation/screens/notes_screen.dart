@@ -38,14 +38,12 @@ class _NotesScreenState extends State<NotesScreen> {
 
     // Get the current locale from settings
     _selectedLocaleId = _settingsService.selectedLocaleId;
-    print('NotesScreen: Initial language set to $_selectedLocaleId');
 
     // Listen for locale changes from other screens
     _localeSubscription = _settingsService.localeStream.listen((localeId) {
       if (mounted && _selectedLocaleId != localeId) {
         setState(() {
           _selectedLocaleId = localeId;
-          print('NotesScreen: Language changed to $_selectedLocaleId');
         });
       }
     });

@@ -14,12 +14,9 @@ class TagGeneratorService {
 
     // Only reinitialize if the API key has changed or not initialized yet
     if (apiKey != _currentApiKey || !_isInitialized) {
-      print(
-          'TagGeneratorService: Initializing with API key: ${apiKey.isNotEmpty ? "[KEY SET]" : "[EMPTY KEY]"}');
       _currentApiKey = apiKey;
 
       if (apiKey.isEmpty) {
-        print('TagGeneratorService: Warning - Empty API key provided');
         _isInitialized = false;
         return;
       }
@@ -37,18 +34,14 @@ class TagGeneratorService {
       await _ensureInitialized();
 
       if (!_isInitialized || _currentApiKey.isEmpty) {
-        print('TagGeneratorService: Cannot generate tags - API key not set');
         return ['note'];
       }
 
-      print('\n=== Generating tags ===');
-      print('Content to tag: $noteContent');
 
       final prompt =
           'Generate 3-5 relevant single-word tags for the following text. '
           'The tags should always be in english. '
           'Return only the tags separated by commas, without any other text: $noteContent';
-      print('Sending prompt to Gemini: $prompt');
 
       final content = Content.text(prompt);
       final response = await _model.generateContent([content]);
@@ -56,11 +49,9 @@ class TagGeneratorService {
       // Check for null or empty response
       final tagsText = response.text;
       if (tagsText == null || tagsText.isEmpty) {
-        print('Warning: Received empty or null response from Gemini API');
         return ['note'];
       }
 
-      print('Raw Gemini response: $tagsText');
 
       // Split the response into individual tags and clean them
       final tags = tagsText
@@ -71,22 +62,17 @@ class TagGeneratorService {
 
       // If no valid tags were extracted, return a default tag
       if (tags.isEmpty) {
-        print('Warning: No valid tags extracted from response');
         return ['note', _getCurrentDateTimeTag()];
       }
 
       // Add date-time tag to the list
       tags.add(_getCurrentDateTimeTag());
 
-      print('Processed tags: $tags');
-      print('=== Tag generation complete ===\n');
       return tags;
     } catch (e) {
-      print('Error generating tags: $e');
 
       if (e.toString().contains('unregistered callers') ||
           e.toString().contains('API Key')) {
-        print('TagGeneratorService: Invalid API key detected');
       }
 
       // Return a default tag if generation fails

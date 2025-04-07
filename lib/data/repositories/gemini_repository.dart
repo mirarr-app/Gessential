@@ -15,12 +15,9 @@ class GeminiRepository implements ChatRepository {
 
     // Only reinitialize if the API key has changed or not initialized yet
     if (apiKey != _currentApiKey || !_isInitialized) {
-      print(
-          'GeminiRepository: Initializing with API key: ${apiKey.isNotEmpty ? "[KEY SET]" : "[EMPTY KEY]"}');
       _currentApiKey = apiKey;
 
       if (apiKey.isEmpty) {
-        print('GeminiRepository: Warning - Empty API key provided');
       }
 
       _model = GenerativeModel(
@@ -46,13 +43,11 @@ class GeminiRepository implements ChatRepository {
 
       // Check if response text is not null or empty
       if (response.text == null || response.text!.isEmpty) {
-        print('Warning: Received empty response from Gemini API');
         return 'No response content';
       }
 
       return response.text!;
     } catch (e) {
-      print('Error in Gemini API call: $e');
 
       if (e.toString().contains('unregistered callers') ||
           e.toString().contains('API Key')) {
