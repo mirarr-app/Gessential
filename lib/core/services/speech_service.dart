@@ -20,7 +20,8 @@ class SpeechService {
         onError: (error) => debugPrint('Speech recognition error: $error'),
       );
       if (_isInitialized) {
-        await printAvailableLocales();
+        // await printAvailableLocales();
+        debugPrint('Speech recognition initialized successfully');
       } else {}
       return _isInitialized;
     } catch (e) {
