@@ -88,13 +88,21 @@ class MainApp extends StatelessWidget {
         '/notes': (context) => const NotesScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
       },
+      theme: ShadThemeData(colorScheme: ShadZincColorScheme.light(), brightness: Brightness.light, textTheme: ShadTextTheme.fromGoogleFont(
+          GoogleFonts.poppins,
+        ),),
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
-        colorScheme: const ShadZincColorScheme.dark(),
+        colorScheme: const ShadZincColorScheme.dark(
+          
+        ),
+        
         textTheme: ShadTextTheme.fromGoogleFont(
           GoogleFonts.poppins,
         ),
+        
       ),
+      
     );
   }
 }

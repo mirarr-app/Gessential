@@ -292,7 +292,12 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.notes), label: 'Notes'),
           ],
-          selectedItemColor: Colors.white,
+          selectedItemColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).indicatorColor
+              : Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).disabledColor
+              : Theme.of(context).unselectedWidgetColor,
           currentIndex: 0,
           onTap: (index) {
             if (index == 1) {

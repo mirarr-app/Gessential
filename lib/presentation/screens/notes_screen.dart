@@ -744,7 +744,13 @@ class _NotesScreenState extends State<NotesScreen> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.notes), label: 'Notes'),
               ],
-              selectedItemColor: Colors.white,
+                        selectedItemColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).indicatorColor
+              : Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).disabledColor
+              : Theme.of(context).unselectedWidgetColor,
+
               currentIndex: 1,
               onTap: (index) {
                 if (index == 0) {
