@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class SpeechService {
@@ -16,10 +17,11 @@ class SpeechService {
     try {
       _isInitialized = await _speechToText.initialize(
         options: [if (Platform.isAndroid) SpeechToText.androidIntentLookup],
-        onError: (error) => print('Speech recognition error: $error'),
+        onError: (error) => debugPrint('Speech recognition error: $error'),
       );
       if (_isInitialized) {
-        await printAvailableLocales();
+        // await printAvailableLocales();
+        debugPrint('Speech recognition initialized successfully');
       } else {}
       return _isInitialized;
     } catch (e) {
@@ -99,7 +101,7 @@ class SpeechService {
       try {
         await _speechToText.stop();
       } catch (e) {
-        print('Error stopping speech recognition: $e');
+        debugPrint('Error stopping speech recognition: $e');
       } finally {
         _isListening = false;
       }

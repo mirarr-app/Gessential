@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/onboarding_page.dart';
-import '../settings_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -65,9 +64,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _currentPage = page;
                   });
                 },
-                children: [
+                children: const [
                   // Welcome Page
-                  const OnboardingPage(
+                  OnboardingPage(
                     title: 'Welcome to Gessential',
                     description:
                         'Gessential is an AI note-taking app powered by Google Gemini. Create, organize, and enhance your notes with the power of AI.',
@@ -85,15 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         'The app won\'t work without an API key. You can get your API key from Google AI Studio and add it in the Settings.',
                     image: Icons.key,
                     imageSize: 80,
-                    actionButton: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const SettingsScreen()),
-                        );
-                      },
-                      child: const Text('Go to Settings'),
-                    ),
+                 
                   ),
                 ],
               ),
@@ -125,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           shape: BoxShape.circle,
                           color: index == _currentPage
                               ? Colors.grey.shade300
-                              : Theme.of(context).primaryColor,
+                              : Colors.white38,
                         ),
                       ),
                     ),

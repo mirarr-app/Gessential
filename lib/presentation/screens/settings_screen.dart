@@ -93,16 +93,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SnackBar(
             content: Text(message),
             duration: const Duration(seconds: 2),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
           ),
         );
       }
     } catch (e) {
-      print('Error saving API key: $e');
+      debugPrint('Error saving API key: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving API key: $e'),
             duration: const Duration(seconds: 2),
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -122,32 +124,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Settings'),
+          elevation: 0,
+          scrolledUnderElevation: 1,
+          title: Text('Settings', style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          )),
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
             : ListView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 children: [
                   // API Key Section
                   const SectionHeader(title: 'API Key Settings'),
                   Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Google Gemini API Key',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
+                          Text(
                             'Enter your Google Gemini API key to enable AI features. Without a valid API key, AI features like tag generation and chat will not work.',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           InkWell(
                             onTap: () async {
                               final Uri url = Uri.parse(
@@ -155,47 +168,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               if (!await launchUrl(url)) {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
+                                    SnackBar(
+                                      content: const Text(
                                           'Could not open URL. Please visit aistudio.google.com/app/apikey manually'),
-                                      duration: Duration(seconds: 4),
+                                      duration: const Duration(seconds: 4),
+                                      backgroundColor: Theme.of(context).colorScheme.error,
                                     ),
                                   );
                                 }
                               }
                             },
-                            child: const Text(
+                            child: Text(
                               'Get an API key from Google AI Studio',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Theme.of(context).colorScheme.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
                           // API Key status indicator
-                          Row(
-                            children: [
-                              Icon(
-                                _hasApiKey
-                                    ? Icons.check_circle
-                                    : Icons.error_outline,
-                                color:
-                                    _hasApiKey ? Colors.green : Colors.orange,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                _hasApiKey
-                                    ? 'API key is set and ready to use'
-                                    : 'No API key set - AI features unavailable',
-                                style: TextStyle(
-                                  color:
-                                      _hasApiKey ? Colors.green : Colors.orange,
-                                  fontWeight: FontWeight.bold,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: _hasApiKey 
+                                ? Theme.of(context).colorScheme.secondaryContainer 
+                                : Theme.of(context).colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _hasApiKey ? Icons.check_circle : Icons.error_outline,
+                                  color: _hasApiKey 
+                                    ? Theme.of(context).colorScheme.onSecondaryContainer 
+                                    : Theme.of(context).colorScheme.onErrorContainer,
+                                  size: 20,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 8),
+                                Text(
+                                  _hasApiKey
+                                      ? 'API key is set and ready to use'
+                                      : 'No API key set - AI features unavailable',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: _hasApiKey 
+                                      ? Theme.of(context).colorScheme.onSecondaryContainer 
+                                      : Theme.of(context).colorScheme.onErrorContainer,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -203,19 +226,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             decoration: InputDecoration(
                               labelText: 'API Key',
                               hintText: 'Enter your Gemini API key here',
-                              border: const OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 1,
+                                ),
+                              ),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
                                     icon: Icon(
-                                      _obscureApiKey
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
+                                      _obscureApiKey ? Icons.visibility_off : Icons.visibility,
+                                      size: 20,
                                     ),
-                                    tooltip: _obscureApiKey
-                                        ? 'Show API key'
-                                        : 'Hide API key',
+                                    tooltip: _obscureApiKey ? 'Show API key' : 'Hide API key',
+                                    style: IconButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
                                     onPressed: () {
                                       setState(() {
                                         _obscureApiKey = !_obscureApiKey;
@@ -223,26 +264,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.save),
+                                    icon: const Icon(Icons.save_outlined, size: 20),
                                     tooltip: 'Save API key',
+                                    style: IconButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
                                     onPressed: _saveApiKey,
                                   ),
                                 ],
                               ),
                             ),
                             obscureText: _obscureApiKey,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Row(
                             children: [
-                              const Icon(Icons.info_outline,
-                                  size: 16, color: Colors.blue),
+                              Icon(Icons.info_outline,
+                                  size: 16, color: Theme.of(context).colorScheme.primary),
                               const SizedBox(width: 8),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
                                   'Your API key is stored locally on your device for security.',
-                                  style: TextStyle(
-                                    fontSize: 12,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),
@@ -257,51 +304,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Accessibility Section
                   const SectionHeader(title: 'Accessibility'),
                   Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Voice Note Quick Launch',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
+                          Text(
                             'Enable quick launch of voice notes by holding the volume up button. This works even when the app is not open.',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Icon(
-                                _isAccessibilityServiceEnabled
-                                    ? Icons.check_circle
-                                    : Icons.error_outline,
-                                color: _isAccessibilityServiceEnabled
-                                    ? Colors.green
-                                    : Colors.orange,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _isAccessibilityServiceEnabled
-                                      ? 'Quick launch is enabled'
-                                      : 'Quick launch is not enabled',
-                                  style: TextStyle(
-                                    color: _isAccessibilityServiceEnabled
-                                        ? Colors.green
-                                        : Colors.orange,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: _isAccessibilityServiceEnabled 
+                                ? Theme.of(context).colorScheme.secondaryContainer 
+                                : Theme.of(context).colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _isAccessibilityServiceEnabled ? Icons.check_circle : Icons.error_outline,
+                                  color: _isAccessibilityServiceEnabled 
+                                    ? Theme.of(context).colorScheme.onSecondaryContainer 
+                                    : Theme.of(context).colorScheme.onErrorContainer,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _isAccessibilityServiceEnabled
+                                        ? 'Quick launch is enabled'
+                                        : 'Quick launch is not enabled',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: _isAccessibilityServiceEnabled 
+                                        ? Theme.of(context).colorScheme.onSecondaryContainer 
+                                        : Theme.of(context).colorScheme.onErrorContainer,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 16),
-                          ElevatedButton.icon(
+                          FilledButton.icon(
                             onPressed: _openAccessibilitySettings,
-                            icon: const Icon(Icons.settings_accessibility),
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            icon: const Icon(Icons.settings_accessibility, size: 20),
                             label: Text(
                               _isAccessibilityServiceEnabled
                                   ? 'Manage Quick Launch'
@@ -317,26 +385,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Language Section
                   const SectionHeader(title: 'Language Settings'),
                   Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Speech Recognition Language',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
+                          Text(
                             'Select the language to use for speech recognition throughout the app.',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Language',
-                              border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 1,
+                                ),
+                              ),
                             ),
                             value: _selectedLocaleId,
                             items: _availableLocales.map((locale) {
@@ -353,23 +444,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                 // Show saving indicator
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('Saving language preference...'),
-                                    duration: Duration(milliseconds: 500),
+                                  SnackBar(
+                                    content: const Text('Saving language preference...'),
+                                    duration: const Duration(milliseconds: 500),
+                                    backgroundColor: Theme.of(context).colorScheme.secondary,
                                   ),
                                 );
 
                                 // Save to settings service
-                                await _settingsService
-                                    .setSelectedLocaleId(newValue);
+                                await _settingsService.setSelectedLocaleId(newValue);
 
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content:
-                                          Text('Language preference saved'),
-                                      duration: Duration(seconds: 2),
+                                    SnackBar(
+                                      content: const Text('Language preference saved'),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
                                     ),
                                   );
                                 }
@@ -385,20 +475,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Info Section
                   const SectionHeader(title: 'App Information'),
                   Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
-                            title: const Text('GitHub Repository'),
-                            subtitle:
-                                const Text('github.com/mirarr-app/Gessential'),
-                            leading: const Icon(Icons.code),
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              'GitHub Repository',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'github.com/mirarr-app/Gessential',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            leading: Icon(
+                              Icons.code_rounded,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                             onTap: () {
-                              // Add link to GitHub repo if needed
-                              launchUrl(Uri.parse(
-                                  'https://github.com/mirarr-app/Gessential'));
+                              launchUrl(Uri.parse('https://github.com/mirarr-app/Gessential'));
                             },
                           ),
                         ],

@@ -11,32 +11,28 @@ class SettingsService extends ChangeNotifier {
   bool _initialized = false;
 
   SettingsService._internal() {
-    print('SettingsService: Initializing...');
     _initPrefs();
   }
 
   Future<void> _initPrefs() async {
     try {
-      print('SettingsService: Loading SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
 
       // Load saved locale or use default
       final savedLocale = _prefs!.getString(_localeKey);
 
       if (savedLocale != null) {
-        print('SettingsService: Found saved locale: $savedLocale');
         _selectedLocaleId = savedLocale;
         _localeController.add(savedLocale);
       } else {
-        print(
+        debugPrint(
             'SettingsService: No saved locale found, using default: $_selectedLocaleId');
       }
 
       _initialized = true;
-      print('SettingsService: Initialization complete');
       notifyListeners();
     } catch (e) {
-      print('SettingsService: Error initializing preferences: $e');
+      debugPrint('SettingsService: Error initializing preferences: $e');
     }
   }
 
@@ -49,7 +45,6 @@ class SettingsService extends ChangeNotifier {
   bool get isInitialized => _initialized;
 
   Future<void> setSelectedLocaleId(String localeId) async {
-    print('SettingsService: Setting locale to: $localeId');
     if (_selectedLocaleId != localeId) {
       _selectedLocaleId = localeId;
       _localeController.add(localeId);
@@ -58,18 +53,18 @@ class SettingsService extends ChangeNotifier {
       if (_prefs != null) {
         try {
           final success = await _prefs!.setString(_localeKey, localeId);
-          print('SettingsService: Saved locale to preferences: $success');
+          debugPrint('SettingsService: Saved locale to preferences: $success');
         } catch (e) {
-          print('SettingsService: Error saving locale: $e');
+          debugPrint('SettingsService: Error saving locale: $e');
         }
       } else {
-        print(
+        debugPrint(
             'SettingsService: SharedPreferences not initialized, cannot save locale');
       }
 
       notifyListeners();
     } else {
-      print('SettingsService: Locale unchanged (already $localeId)');
+      debugPrint('SettingsService: Locale unchanged (already $localeId)');
     }
   }
 
@@ -77,12 +72,11 @@ class SettingsService extends ChangeNotifier {
     if (_prefs != null) {
       try {
         await _prefs!.clear();
-        print('SettingsService: All settings cleared');
         _selectedLocaleId = SpeechService.englishLocaleId;
         _localeController.add(_selectedLocaleId);
         notifyListeners();
       } catch (e) {
-        print('SettingsService: Error clearing settings: $e');
+        debugPrint('SettingsService: Error clearing settings: $e');
       }
     }
   }

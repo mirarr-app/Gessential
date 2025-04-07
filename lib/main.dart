@@ -24,21 +24,12 @@ void main() async {
   // Initialize app-wide services
   final settingsService = SettingsService.instance;
 
-  // Wait for settings to be loaded
-  // We wait until we have a locale since we need it right away
   int attempts = 0;
   while (!settingsService.isInitialized && attempts < 10) {
-    print('Waiting for settings to initialize... Attempt ${attempts + 1}');
     await Future.delayed(const Duration(milliseconds: 100));
     attempts++;
   }
 
-  if (settingsService.isInitialized) {
-    print(
-        'Settings initialized successfully, selected locale: ${settingsService.selectedLocaleId}');
-  } else {
-    print('Settings initialization timed out, proceeding with default values');
-  }
 
   // Initialize quick actions
   final QuickActions quickActions = QuickActions();
@@ -58,8 +49,6 @@ void main() async {
   // Handle quick action taps
   quickActions.initialize((type) {
     if (type == actionNewNote) {
-      // Navigate to new note screen
-      // This will be handled in the RootScreen
       RootScreen.handleShortcut(type);
     } else if (type == actionVoiceNote) {
       // Navigate to voice note screen
@@ -81,20 +70,27 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShadApp.material(
       navigatorKey: navigatorKey,
-      title: 'GemRem',
+      title: 'Gessential',
       initialRoute: onboardingCompleted ? '/' : '/onboarding',
       routes: {
         '/': (context) => const RootScreen(),
         '/notes': (context) => const NotesScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
       },
+      theme: ShadThemeData(colorScheme: const ShadZincColorScheme.light(), brightness: Brightness.light, textTheme: ShadTextTheme.fromGoogleFont(
+          GoogleFonts.poppins,
+        ),),
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
-        colorScheme: const ShadZincColorScheme.dark(),
+        colorScheme: const ShadZincColorScheme.dark(
+        ),
+        
         textTheme: ShadTextTheme.fromGoogleFont(
           GoogleFonts.poppins,
         ),
+        
       ),
+      
     );
   }
 }

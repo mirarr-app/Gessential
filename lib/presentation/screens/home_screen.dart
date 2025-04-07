@@ -180,10 +180,17 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Chat'),
+          elevation: 0,
+          scrolledUnderElevation: 1,
+          title: Text('Chat', style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          )),
           actions: [
             IconButton(
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.settings, size: 24),
+              style: IconButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -202,81 +209,144 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Column(
                     children: [
                       if (_contextNotes.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Using context from ${_contextNotes.length} relevant notes',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              const SizedBox(height: 4),
-                              Wrap(
-                                spacing: 4,
-                                children: _contextNotes
-                                    .expand((note) => note.tags)
-                                    .toSet()
-                                    .map((tag) => Chip(
-                                          label: Text(tag),
-                                        ))
-                                    .toList(),
-                              ),
-                            ],
+                        Card(
+                          margin: const EdgeInsets.all(16),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.info_outline, 
+                                      size: 16,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Context from ${_contextNotes.length} notes',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 6,
+                                  runSpacing: 6,
+                                  children: _contextNotes
+                                      .expand((note) => note.tags)
+                                      .toSet()
+                                      .map((tag) => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).colorScheme.secondaryContainer,
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            child: Text(
+                                              tag,
+                                              style: TextStyle(
+                                                color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       Expanded(
                         child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           itemCount: _chatMessages.length,
                           itemBuilder: (context, index) {
-                            return ChatMessageWidget(
-                                message: _chatMessages[index]);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: ChatMessageWidget(message: _chatMessages[index]),
+                            );
                           },
                         ),
                       ),
                       if (_isLoading)
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).shadowColor.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, -2),
+                            ),
+                          ],
+                        ),
                         child: Row(
                           children: [
                             Expanded(
                               child: TextField(
                                 controller: _messageController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: 'Type your message...',
-                                  border: OutlineInputBorder(),
+                                  hintStyle: TextStyle(
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  filled: true,
+                                  fillColor: Theme.of(context).colorScheme.surfaceVariant,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      width: 1,
+                                    ),
+                                  ),
                                 ),
                                 onSubmitted: (_) => _sendMessage(),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
+                            const SizedBox(width: 12),
+                            FloatingActionButton(
+                              heroTag: 'mic',
+                              mini: true,
                               onPressed: _toggleListening,
-                              icon: const Icon(
-                                Icons.mic,
-                              ),
-                              style: IconButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                              ),
+                              child: const Icon(Icons.mic, size: 20),
                             ),
                             const SizedBox(width: 8),
-                            IconButton(
+                            FloatingActionButton(
+                              heroTag: 'send',
+                              mini: true,
                               onPressed: _sendMessage,
-                              icon: const Icon(Icons.send),
-                              style: IconButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                              ),
+                              child: const Icon(Icons.send, size: 20),
                             ),
                           ],
                         ),
@@ -287,14 +357,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                         'Please set up your Gemini API key in the Settings.'),
                   ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.notes), label: 'Notes'),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: 0,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.notes_outlined),
+              selectedIcon: Icon(Icons.notes),
+              label: 'Notes',
+            ),
           ],
-          selectedItemColor: Colors.white,
-          currentIndex: 0,
-          onTap: (index) {
+          onDestinationSelected: (index) {
             if (index == 1) {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const NotesScreen()));
