@@ -16,7 +16,9 @@
 
 Quick notes with the power of Gemini.
 
-<img src="https://github.com/user-attachments/assets/11824336-d844-4556-b7fa-22e32ca43f8f" width="300"> <img src="https://github.com/user-attachments/assets/0a605bea-eefd-41ab-ad3a-5bd219644dbb" width="300"> 
+<img src="https://github.com/user-attachments/assets/4940869a-197d-48a0-843a-03f5637cec54" width="300"> <img src="https://github.com/user-attachments/assets/68551c87-37f1-4f9f-8774-f2f2b6f7fd5a" width="300"> 
+
+
 
 
 ## About
