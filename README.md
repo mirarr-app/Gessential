@@ -23,6 +23,8 @@ Quick notes with the power of Gemini.
 
 ## About
 
+### Nothing essential space app for other phones
+
 Nothing with their Nothing Phone 3a announced an app that allows pushing a dedicated button on the phone to quickly record a note and it transcribes and tags it.
 This project aims to provide the similar functionality to other phones by using Gemini api.
 
